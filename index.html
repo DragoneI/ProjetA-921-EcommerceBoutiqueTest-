@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta http-equiv="Content-Security-Policy" content="
+  default-src 'self';
+  script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com;
+  style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com;
+  img-src 'self' data:;
+  font-src 'self' https://cdnjs.cloudflare.com;
+  object-src 'none';
+  base-uri 'self';
+  form-action 'self';
+">
+  <title>Boutique Orientale</title>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <nav class="navbar">
+  <div class="logo">
+    <i class="fas fa-mosque"></i>
+    <span>Boutique Orientale</span>
+  </div>
+
+  <!-- Menu principal avec bouton fermeture -->
+  <ul class="nav-links">
+    <li class="close-menu-btn">
+      <button onclick="closeMobileMenu()">×</button>
+    </li>
+    <li><a href="#home">Accueil</a></li>
+    <li><a href="#produits">Produits</a></li>
+    <li><a href="#collection">Collections</a></li>
+    <li><a href="#about">À propos</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+
+  <div class="nav-actions">
+    <button class="cart-btn" id="open-cart">
+      <i class="fas fa-shopping-cart"></i>
+      <span class="cart-count">0</span>
+    </button>
+    
+    <button class="menu-toggle" id="menu-toggle">
+      <i class="fas fa-bars"></i>
+    </button>
+  </div>
+</nav>
+
+  <!-- Overlay et Panier -->
+  <div class="cart-overlay" id="cart-overlay"></div>
+ <div class="cart-container" id="cart-container">
+  <div class="cart-header">
+    <h3>Votre Panier</h3>
+    <button class="close-cart" id="close-cart">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+  <div class="cart-items" id="cart-items">
+    <!-- Contenu dynamique -->
+  </div>
+  <div class="cart-footer">
+    <div class="cart-total">
+      <span>Total:</span>
+      <span id="cart-total">0 €</span>
+    </div>
+    <button class="checkout-btn"
+    id="checkout-btn">
+      <i class="fas fa-credit-card"></i> Passer commande
+    </button>
+  </div>
+</div>
+  <!-- hero section -->
+  
+  <section class="hero" id="home">
+  <div class="hero-content">      
+    <h1>Découvrez l'Artisanat Oriental</h1>
+    <p>Des pièces uniques inspirées des traditions millénaires</p>
+    <div class="hero-buttons">
+      <a href="#produits" class="btn-primary">Nos Collections</a>
+      <a href="#promotions" class="btn-secondary">Promotions</a>
+    </div>
+  </div>
+  <div class="hero-image">
+    <img src="img.png"
+     alt="Motif oriental décoratif" 
+     class="hero-image">
+  </div>
+</section>
+
+<!-- Section Best Choices -->
+<section class="best-choices" id="collection">
+  <div class="section-header">
+    <h2>Nos Créations d'Exception</h2>
+    <p>Pièces sélectionnées pour leur authenticité et savoir-faire artisanal</p>
+  </div>
+
+  <div class="products-grid">
+    <!-- Produit 1 -->
+    <div class="product-card">
+      <div class="product-badge">Best Seller</div>
+      <img src="img.png" alt="Tapis Oriental">
+      <div class="product-info">
+        <h3>Tapis "Sahara"</h3>
+        <p>100% laine, tissé à la main</p>
+        <div class="product-footer">
+          <span class="price">249€</span>
+          <button class="add-to-cart" onclick="addProductToCart(1, 'Tapis Sahara', 249, 'tapissahara.jpg', event)">
+            Ajouter au panier
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Produit 2 -->
+    <div class="product-card">
+      <div class="product-badge">Nouveauté</div>
+      <img src="img.png" alt="Lampe en Cuivre">
+      <div class="product-info">
+        <h3>Lampe "Alhambra"</h3>
+        <p>Cuivre repoussé, motifs géométriques</p>
+        <div class="product-footer">
+          <span class="price">189€</span>
+          <button class="add-to-cart" onclick="addProductToCart(2, 'Lampe Alhambra', 189, 'lampalhambra.jpg', event)">
+            Ajouter au panier
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Produit 3 -->
+    <div class="product-card">
+      <img src="img.png" alt="Théière Céramique">
+      <div class="product-info">
+        <h3>Théière "Zénith"</h3>
+        <p>Céramique émaillée, motif bleu de Fès</p>
+        <div class="product-footer">
+          <span class="price">129€</span>
+          <button class="add-to-cart" onclick="addProductToCart(3, 'Théière Zénith', 129, 'theierezenith.jpg', event)">
+            Ajouter au panier
+          </button>
+        </div>
+      </div>
+    </div>
+      <!-- Produit 4 -->
+    <div class="product-card">
+      <div class="product-badge">Nouveauté</div>
+      <img src="img.png" alt="Lampe en Cuivre">
+      <div class="product-info">
+        <h3>Lampe "Alhambra"</h3>
+        <p>Cuivre repoussé, motifs géométriques</p>
+        <div class="product-footer">
+          <span class="price">189€</span>
+          <button class="add-to-cart" onclick="addProductToCart(2, 'Lampe Alhambra', 189, 'lampalhambra.jpg', event)">
+            Ajouter au panier
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Section Nos Produits -->
+<section class="products-section" id="produits">
+  <div class="section-header">
+    <h2>Nos Artisanats d'Exception</h2>
+    <p>Découvrez nos collections faites main par des artisans passionnés</p>
+  </div>
+
+  <!-- Filtres par catégorie -->
+  <div class="category-filters">
+    <button class="filter-btn active" data-category="all">Tous</button>
+    <button class="filter-btn" data-category="tapis">Tapis</button>
+    <button class="filter-btn" data-category="luminaire">Luminaires</button>
+    <button class="filter-btn" data-category="decoration">Décoration</button>
+    <button class="filter-btn" data-category="mobilier">Mobilier</button>
+    <button class="filter-btn" data-category="vaisselle">Vaisselle</button>
+  </div>
+
+  <!-- Grille de produits -->
+  <div class="products-grid">
+    <!-- Produit 1 -->
+    <div class="product-card" data-category="tapis">
+      <div class="product-badge">Best Seller</div>
+      <img src="img.png" alt="Tapis Berbère">
+      <div class="product-info">
+        <h3>Tapis "Beni Ourain"</h3>
+        <p>Laine naturelle, tissage traditionnel</p>
+        <div class="product-footer">
+          <span class="price">349€</span>
+          <button class="add-to-cart" onclick="addProductToCart(4, 'Tapis Beni Ourain', 349, 'tapis_berbere.jpg', event)">
+            <i class="fas fa-shopping-cart"></i> Ajouter
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Produit 2 -->
+    <div class="product-card" data-category="luminaire">
+      <div class="product-badge">Nouveauté</div>
+      <img src="img.png" alt="Lampe Marocaine">
+      <div class="product-info">
+        <h3>Lampe "Fès"</h3>
+        <p>Laiton et verre coloré, motif géométrique</p>
+        <div class="product-footer">
+          <span class="price">199€</span>
+          <button class="add-to-cart" onclick="addProductToCart(5, 'Lampe Fès', 199, 'lampe_fes.jpg', event)">
+            <i class="fas fa-shopping-cart"></i> Ajouter
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Produit 3 -->
+    <div class="product-card" data-category="decoration">
+      <img src="img.png" alt="Plateau Métallique">
+      <div class="product-info">
+        <h3>Plateau "Damascus"</h3>
+        <p>Métal martelé, finition antiquaire</p>
+        <div class="product-footer">
+          <span class="price">129€</span>
+          <button class="add-to-cart" onclick="addProductToCart(6, 'Plateau Damascus', 129, 'plateau_metal.jpg', event)">
+            <i class="fas fa-shopping-cart"></i> Ajouter
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Produit 4 -->
+    <div class="product-card" data-category="mobilier">
+      <div class="product-badge">Édition limitée</div>
+      <img src="img.png" alt="Table Bois">
+      <div class="product-info">
+        <h3>Table "Atlas"</h3>
+        <p>Bois de cèdre massif, incrustations</p>
+        <div class="product-footer">
+          <span class="price">599€</span>
+          <button class="add-to-cart" onclick="addProductToCart(7, 'Table Atlas', 599, 'table_bois.jpg', event)">
+            <i class="fas fa-shopping-cart"></i> Ajouter
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Produit 5 -->
+    <div class="product-card" data-category="vaisselle">
+      <img src="img.png" alt="Set Théière">
+      <div class="product-info">
+        <h3>Set "Médina"</h3>
+        <p>Céramique émaillée, 6 pièces</p>
+        <div class="product-footer">
+          <span class="price">179€</span>
+          <button class="add-to-cart" onclick="addProductToCart(8, 'Set Médina', 179, 'set_theiere.jpg', event)">
+            <i class="fas fa-shopping-cart"></i> Ajouter
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- Produit 6-->
+    <div class="product-card" data-category="vaisselle">
+      <img src="img.png" alt="Set Théière">
+      <div class="product-info">
+        <h3>Set "Médina"</h3>
+        <p>Céramique émaillée, 6 pièces</p>
+        <div class="product-footer">
+          <span class="price">179€</span>
+          <button class="add-to-cart" onclick="addProductToCart(8, 'Set Médina', 179, 'set_theiere.jpg', event)">
+            <i class="fas fa-shopping-cart"></i> Ajouter
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Section Nos Atouts -->
+<section class="features-section">
+  <div class="features-container">
+    <div class="section-header">
+      <h2>Notre Engagement</h2>
+      <p>L'excellence artisanale au service de votre intérieur</p>
+    </div>
+
+    <div class="features-grid">
+      <!-- Atout 1 -->
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-shield-alt"></i>
+          <div class="icon-bg"></div>
+        </div>
+        <h3>Sécurité Maximale</h3>
+        <p>Des matériaux certifiés et des procédés de fabrication rigoureux pour des produits sûrs et durables</p>
+        <div class="feature-line"></div>
+      </div>
+
+      <!-- Atout 2 -->
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-award"></i>
+          <div class="icon-bg"></div>
+        </div>
+        <h3>Qualité Exceptionnelle</h3>
+        <p>Un savoir-faire artisanal transmis depuis des générations pour une finition impeccable</p>
+        <div class="feature-line"></div>
+      </div>
+
+      <!-- Atout 3 -->
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-tag"></i>
+          <div class="icon-bg"></div>
+        </div>
+        <h3>Prix Justes</h3>
+        <p>Des prix transparents sans intermédiaire, directement du fabricant à votre domicile</p>
+        <div class="feature-line"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Section À Propos -->
+<section class="about-section" id="about">
+  <div class="about-container">
+    <!-- Partie Texte -->
+    <div class="about-content">
+      <div class="section-header">
+        <span class="section-subtitle">Notre Histoire</span>
+        <h2>L'Artisanat dans l'Âme</h2>
+        <div class="ornament-divider">
+          <div class="line"></div>
+          <i class="fas fa-mosque"></i>
+          <div class="line"></div>
+        </div>
+      </div>
+
+      <div class="about-text">
+        <p>Depuis 1987, <strong>Boutique Orientale</strong> perpétue la tradition d'un savoir-faire ancestral. Chaque pièce de notre collection est le fruit d'une collaboration directe avec des artisans du Maroc, de Turquie et du Moyen-Orient.</p>
+        
+        <p>Nous sélectionnons avec passion des matériaux nobles - bois de cèdre, cuivre martelé, laine berbère - et des techniques transmises de génération en génération pour vous offrir des pièces uniques chargées d'histoire.</p>
+        
+        <ul class="about-features">
+          <li><i class="fas fa-check-circle"></i> <span>30 ans d'expertise artisanale</span></li>
+          <li><i class="fas fa-check-circle"></i> <span>150 artisans partenaires</span></li>
+          <li><i class="fas fa-check-circle"></i> <span>100% fait main</span></li>
+        </ul>
+        
+        <button class="discover-btn">
+          Découvrez notre atelier
+          <i class="fas fa-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Partie Image -->
+    <div class="about-image">
+      <div class="image-frame">
+        <!-- Image principale avec fallback -->
+        <img 
+  src="img.png" 
+  alt="Atelier artisanal oriental"
+  style="
+    filter: sepia(30%) hue-rotate(-10deg) saturate(1.2) contrast(0.9) brightness(0.95);
+    border: 2px solid rgba(26, 54, 93, 0.1);
+    box-shadow: 0 4px 15px rgba(246, 173, 85, 0.2);
+  "
+  onerror="this.onerror=null;this.src='img.png'"
+>
+      </div>
+      <div class="pattern-overlay"></div>
+    </div>
+  </div>
+  
+  <!-- Élément décoratif -->
+  <div class="arabesque-decoration">
+    <svg viewBox="0 0 1000 100" preserveAspectRatio="none">
+      <path d="M0,50 C150,20 300,80 500,50 C700,20 850,80 1000,50" 
+            stroke="#00000" 
+            stroke-width="3" 
+            fill="none"
+            stroke-dasharray="1,50"></path>
+    </svg>
+  </div>
+</section>
+
+<!-- Section CTA Réseaux Sociaux -->
+<section class="social-cta" id="contact">
+  <div class="cta-container">
+    <!-- Fond décoratif -->
+    <div class="arabesque-pattern"></div>
+    
+    <!-- Contenu -->
+    <div class="cta-content">
+      <h2>Suivez notre <span>aventure artisanale</span></h2>
+      <p>Découvrez nos créations en exclusivité et plongez dans l'univers de l'artisanat oriental</p>
+      
+      <div class="social-icons">
+        <!-- Instagram -->
+        <a href="#" class="social-icon instagram" aria-label="Instagram">
+          <i class="fab fa-instagram"></i>
+          <span class="icon-bg"></span>
+        </a>
+        
+        <!-- Facebook -->
+        <a href="#" class="social-icon facebook" aria-label="Facebook">
+          <i class="fab fa-facebook-f"></i>
+          <span class="icon-bg"></span>
+        </a>
+        
+        <!-- Twitter/X -->
+        <a href="#" class="social-icon whatsapp" aria-label="Whatsapp">
+          <i class="fab fa-whatsapp"></i>
+          <span class="icon-bg"></span>
+        </a>
+        
+        <!-- Google -->
+        <a href="#" class="social-icon google" aria-label="Google">
+          <i class="fab fa-google"></i>
+          <span class="icon-bg"></span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="site-footer">
+  <div class="footer-container">
+    <!-- Colonne 1 : Logo & Description -->
+    <div class="footer-col">
+      <div class="footer-logo">
+        <i class="fas fa-mosque"></i>
+        <span>Boutique Orientale</span>
+      </div>
+      <p class="footer-description">
+        Artisanat d'exception depuis 1987. 
+        <br>Pièces uniques inspirées des traditions orientales.
+      </p>
+      <div class="footer-social">
+        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" aria-label="Whatsapp"><i class="fab fa-whatsapp"></i></a>
+      </div>
+    </div>
+
+    <!-- Colonne 2 : Liens rapides -->
+    <div class="footer-col">
+      <h3>Navigation</h3>
+      <ul class="footer-links">
+        <li><a href="#">Accueil</a></li>
+        <li><a href="#">Nos collections</a></li>
+        <li><a href="#">Nouveautés</a></li>
+        <li><a href="#">À propos</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </div>
+
+    <!-- Colonne 3 : Infos contact -->
+    <div class="footer-col">
+      <h3>Contactez-nous</h3>
+      <ul class="footer-contact">
+        <li><i class="fas fa-map-marker-alt"></i> 12 Rue des Artisans, Paris</li>
+        <li><i class="fas fa-phone"></i> +33 1 23 45 67 89</li>
+        <li><i class="fas fa-envelope"></i> contact@boutique-orientale.com</li>
+      </ul>
+    </div>
+
+    <!-- Colonne 4 : Newsletter -->
+    <div class="footer-col">
+      <h3>Newsletter</h3>
+      <p>Recevez nos exclusivités et offres spéciales :</p>
+      <form class="newsletter-form">
+        <input type="email" placeholder="Votre email" required>
+        <button type="submit">
+          <i class="fas fa-paper-plane"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Copyright -->
+  <div class="footer-bottom">
+    <p>&copy; 2023 Boutique Orientale. Tous droits réservés.</p>
+    <div class="legal-links">
+      <a href="#">Mentions légales</a>
+      <a href="#">CGV</a>
+      <a href="#">Politique de confidentialité</a>
+    </div>
+  </div>
+
+  <!-- Élément décoratif -->
+  <div class="footer-decoration"></div>
+</footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
