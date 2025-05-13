@@ -1,0 +1,44 @@
+    body{
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;            
+            background-color: #f6ad55;
+        }
+        .order-confirmation {
+            background: #1a365d;
+            color: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);            
+        }
+        .order-details {
+            margin-top: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .item-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #eee;
+        }
+        .total-row {
+            font-weight: bold;
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 2px solid #ddd;
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+        }
+        .error-message {
+            color: #d9534f;
+            background: #fdf7f7;
+            padding: 10px;
+            border-radius: 4px;
+        }

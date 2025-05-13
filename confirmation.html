@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmation de commande</title>  
+     <link rel="stylesheet" href="confirmation.css">
+</head>
+<body>
+    
+    <div class="body">
+    <div class="order-confirmation">
+        <h1>Merci pour votre commande !</h1>
+        <p id="order-status">Nous préparons votre commande.</p>
+        
+        <div class="order-details" id="order-details">
+            <div class="loading">
+                <p>Chargement des détails de votre commande...</p>
+            </div>
+        </div>
+
+        <p id="email-notice">Un récapitulatif de commande sera envoyé à votre adresse email.</p>
+    </div>
+    </div>
+
+    <!-- Ajoutez ces scripts Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    
+   <script src="confirmation.js"></script>
+</body>
+</html>
