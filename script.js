@@ -343,7 +343,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const checkoutBtn = document.getElementById('checkout-btn');
   if (checkoutBtn) {
     checkoutBtn.addEventListener('click', () => {
-      window.location.href = 'Login.html';
+      window.location.href = 'login.html';
     });
   }
 });
