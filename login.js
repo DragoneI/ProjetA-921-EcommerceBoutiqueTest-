@@ -43,11 +43,14 @@ async function loadFirebase() {
     db = firebase.firestore();
 
     auth.onAuthStateChanged(user => {
-      console.log("État auth changé:", user ? "connecté" : "déconnecté");
+      console.log("[DEBUG] État auth changé:", user ? `connecté (${user.uid})` : "déconnecté");
+      if (user) {
+        console.log("[DEBUG] User email verified:", user.emailVerified);
+      }
     });
 
   } catch (error) {
-    console.error("Erreur Firebase:", error);
+    console.error("[ERREUR] Firebase:", error);
     showError("Erreur de chargement");
   }
 }
@@ -59,7 +62,7 @@ function loadScript(src) {
     const script = document.createElement('script');
     script.src = src;
     script.onload = resolve;
-    script.onerror = reject;
+    script.onerror = () => reject(new Error(`Échec du chargement du script: ${src}`));
     document.body.appendChild(script);
   });
 }
@@ -81,20 +84,24 @@ function showError(message, duration = 5000) {
 // Gestion authentification
 async function handleEmailAuth(email, password, userData) {
   try {
+    console.log("[DEBUG] Tentative d'authentification email");
     if (!email || !password) throw new Error('missing-fields');
 
-    // Vérification reCAPTCHA
     const recaptchaToken = grecaptcha.getResponse();
     if (!recaptchaToken) throw new Error('recaptcha-failed');
 
     if (isLoginMode) {
-      await auth.signInWithEmailAndPassword(email, password);
+      console.log("[DEBUG] Mode connexion");
+      const userCredential = await auth.signInWithEmailAndPassword(email, password);
+      console.log("[DEBUG] Connexion réussie", userCredential.user);
     } else {
+      console.log("[DEBUG] Mode inscription");
       if (!userData.firstName || !userData.lastName || !userData.username) {
         throw new Error('missing-fields');
       }
 
       const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+      console.log("[DEBUG] Inscription réussie", userCredential.user);
       
       await db.collection('users').doc(userCredential.user.uid).set({
         firstName: userData.firstName.trim(),
@@ -106,11 +113,13 @@ async function handleEmailAuth(email, password, userData) {
     }
 
     grecaptcha.reset();
-    // Attendre que l'état auth soit bien mis à jour
-    await new Promise(resolve => setTimeout(resolve, 300));
-    window.location.href = "/checkout.html";
+    console.log("[DEBUG] Redirection vers checkout.html");
+    window.location.href = window.location.pathname.includes('github.io') 
+      ? "/checkout.html" 
+      : "checkout.html";
 
   } catch (error) {
+    console.error("[ERREUR] handleEmailAuth:", error);
     showError(error.code || error.message);
     grecaptcha.reset();
   }
@@ -118,13 +127,26 @@ async function handleEmailAuth(email, password, userData) {
 
 async function handleGoogleAuth() {
   try {
+    console.log("[DEBUG] Tentative de connexion Google");
     const provider = new firebase.auth.GoogleAuthProvider();
     const result = await auth.signInWithPopup(provider);
+    console.log("[DEBUG] Résultat Google Auth:", result);
 
-    // Attendre explicitement que l'état d'authentification soit mis à jour
-    await new Promise((resolve) => {
+    // Solution robuste pour attendre l'authentification
+    let authResolved = false;
+    await new Promise((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        if (!authResolved) {
+          unsubscribe();
+          reject(new Error("Timeout d'authentification"));
+        }
+      }, 5000);
+
       const unsubscribe = auth.onAuthStateChanged(user => {
         if (user) {
+          console.log("[DEBUG] AuthStateChanged confirmé");
+          authResolved = true;
+          clearTimeout(timeout);
           unsubscribe();
           resolve();
         }
@@ -132,6 +154,7 @@ async function handleGoogleAuth() {
     });
 
     if (result.additionalUserInfo?.isNewUser) {
+      console.log("[DEBUG] Nouvel utilisateur, création du profil");
       await db.collection('users').doc(result.user.uid).set({
         firstName: result.user.displayName?.split(' ')[0] || '',
         lastName: result.user.displayName?.split(' ').slice(1).join(' ') || '',
@@ -140,10 +163,15 @@ async function handleGoogleAuth() {
       });
     }
 
-    window.location.href = "/checkout.html";
+    console.log("[DEBUG] Redirection vers checkout.html");
+    window.location.href = window.location.pathname.includes('github.io') 
+      ? "/checkout.html" 
+      : "checkout.html";
+
   } catch (error) {
+    console.error("[ERREUR] handleGoogleAuth:", error);
     if (error.code !== 'auth/popup-closed-by-user') {
-      showError(error.code);
+      showError(error.code || error.message);
     }
   }
 }
@@ -184,6 +212,7 @@ function initEventListeners() {
 
 // Initialisation
 document.addEventListener('DOMContentLoaded', async () => {
+  console.log("[DEBUG] Initialisation de l'application");
   await loadFirebase();
   initEventListeners();
 });
