@@ -221,7 +221,10 @@ button:active {
   margin-top: -1rem;
   margin-bottom: 1.5rem;
 }
-
+/* Empêche le reCAPTCHA de bloquer les popups */
+.grecaptcha-badge { 
+  visibility: hidden !important;
+}
 
 /* Responsive */
 @media (max-width: 480px) {
