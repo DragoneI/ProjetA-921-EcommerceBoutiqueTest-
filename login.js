@@ -128,7 +128,7 @@ async function handleGoogleAuth() {
       });
     }
 
-    window.location.href = "checkout.html";
+    window.location.href = "/checkout.html";
   } catch (error) {
     if (error.code !== 'auth/popup-closed-by-user') {
       showError(error.code);
