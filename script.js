@@ -1,4 +1,3 @@
-import 'https://tomashubelbauer.github.io/github-pages-local-storage/index.js';
 // Gestion du toggle menu
 const menuToggle = document.getElementById('menu-toggle');
 if (menuToggle) {
