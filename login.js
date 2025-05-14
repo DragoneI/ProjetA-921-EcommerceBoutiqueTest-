@@ -105,12 +105,14 @@ async function handleEmailAuth(email, password, userData) {
       });
     }
 
-    grecaptcha.reset(); // Réinitialiser le reCAPTCHA
-    window.location.href = "checkout.html";
+    grecaptcha.reset();
+    // Attendre que l'état auth soit bien mis à jour
+    await new Promise(resolve => setTimeout(resolve, 300));
+    window.location.href = "/checkout.html";
 
   } catch (error) {
     showError(error.code || error.message);
-    grecaptcha.reset(); // Toujours réinitialiser en cas d'erreur
+    grecaptcha.reset();
   }
 }
 
@@ -118,6 +120,16 @@ async function handleGoogleAuth() {
   try {
     const provider = new firebase.auth.GoogleAuthProvider();
     const result = await auth.signInWithPopup(provider);
+
+    // Attendre explicitement que l'état d'authentification soit mis à jour
+    await new Promise((resolve) => {
+      const unsubscribe = auth.onAuthStateChanged(user => {
+        if (user) {
+          unsubscribe();
+          resolve();
+        }
+      });
+    });
 
     if (result.additionalUserInfo?.isNewUser) {
       await db.collection('users').doc(result.user.uid).set({
