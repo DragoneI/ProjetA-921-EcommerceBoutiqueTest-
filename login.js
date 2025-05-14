@@ -25,7 +25,8 @@ const ERROR_MESSAGES = {
   'auth/email-already-in-use': 'Email déjà utilisé',
   'auth/weak-password': `Mot de passe trop faible (min ${PASSWORD_MIN_LENGTH} caractères)`,
   'missing-fields': 'Veuillez remplir tous les champs',
-  'recaptcha-failed': 'Veuillez valider le reCAPTCHA'
+  'recaptcha-failed': 'Veuillez valider le reCAPTCHA',
+  'google-auth-failed': 'Échec de la connexion Google'
 };
 
 // Chargement Firebase
@@ -43,14 +44,11 @@ async function loadFirebase() {
     db = firebase.firestore();
 
     auth.onAuthStateChanged(user => {
-      console.log("[DEBUG] État auth changé:", user ? `connecté (${user.uid})` : "déconnecté");
-      if (user) {
-        console.log("[DEBUG] User email verified:", user.emailVerified);
-      }
+      console.log("État auth changé:", user ? `connecté (${user.uid})` : "déconnecté");
     });
 
   } catch (error) {
-    console.error("[ERREUR] Firebase:", error);
+    console.error("Erreur Firebase:", error);
     showError("Erreur de chargement");
   }
 }
@@ -84,24 +82,20 @@ function showError(message, duration = 5000) {
 // Gestion authentification
 async function handleEmailAuth(email, password, userData) {
   try {
-    console.log("[DEBUG] Tentative d'authentification email");
     if (!email || !password) throw new Error('missing-fields');
 
+    // Vérification reCAPTCHA
     const recaptchaToken = grecaptcha.getResponse();
     if (!recaptchaToken) throw new Error('recaptcha-failed');
 
     if (isLoginMode) {
-      console.log("[DEBUG] Mode connexion");
-      const userCredential = await auth.signInWithEmailAndPassword(email, password);
-      console.log("[DEBUG] Connexion réussie", userCredential.user);
+      await auth.signInWithEmailAndPassword(email, password);
     } else {
-      console.log("[DEBUG] Mode inscription");
       if (!userData.firstName || !userData.lastName || !userData.username) {
         throw new Error('missing-fields');
       }
 
       const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-      console.log("[DEBUG] Inscription réussie", userCredential.user);
       
       await db.collection('users').doc(userCredential.user.uid).set({
         firstName: userData.firstName.trim(),
@@ -113,13 +107,14 @@ async function handleEmailAuth(email, password, userData) {
     }
 
     grecaptcha.reset();
-    console.log("[DEBUG] Redirection vers checkout.html");
+    // Attendre que l'état auth soit bien mis à jour
+    await new Promise(resolve => setTimeout(resolve, 500));
     window.location.href = window.location.pathname.includes('github.io') 
       ? "/checkout.html" 
       : "checkout.html";
 
   } catch (error) {
-    console.error("[ERREUR] handleEmailAuth:", error);
+    console.error("Erreur auth:", error);
     showError(error.code || error.message);
     grecaptcha.reset();
   }
@@ -127,34 +122,32 @@ async function handleEmailAuth(email, password, userData) {
 
 async function handleGoogleAuth() {
   try {
-    console.log("[DEBUG] Tentative de connexion Google");
     const provider = new firebase.auth.GoogleAuthProvider();
+    provider.addScope('email');
+    provider.setCustomParameters({ prompt: 'select_account' });
+
+    // Détection environnement mobile
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    if (isMobile) {
+      await auth.signInWithRedirect(provider);
+      return;
+    }
+
     const result = await auth.signInWithPopup(provider);
-    console.log("[DEBUG] Résultat Google Auth:", result);
 
-    // Solution robuste pour attendre l'authentification
-    let authResolved = false;
-    await new Promise((resolve, reject) => {
-      const timeout = setTimeout(() => {
-        if (!authResolved) {
-          unsubscribe();
-          reject(new Error("Timeout d'authentification"));
-        }
-      }, 5000);
-
+    // Attendre explicitement que l'état auth soit mis à jour
+    await new Promise((resolve) => {
       const unsubscribe = auth.onAuthStateChanged(user => {
         if (user) {
-          console.log("[DEBUG] AuthStateChanged confirmé");
-          authResolved = true;
-          clearTimeout(timeout);
           unsubscribe();
           resolve();
         }
       });
+      setTimeout(resolve, 1000); // Fallback timeout
     });
 
     if (result.additionalUserInfo?.isNewUser) {
-      console.log("[DEBUG] Nouvel utilisateur, création du profil");
       await db.collection('users').doc(result.user.uid).set({
         firstName: result.user.displayName?.split(' ')[0] || '',
         lastName: result.user.displayName?.split(' ').slice(1).join(' ') || '',
@@ -163,15 +156,14 @@ async function handleGoogleAuth() {
       });
     }
 
-    console.log("[DEBUG] Redirection vers checkout.html");
     window.location.href = window.location.pathname.includes('github.io') 
       ? "/checkout.html" 
       : "checkout.html";
 
   } catch (error) {
-    console.error("[ERREUR] handleGoogleAuth:", error);
+    console.error("Erreur Google auth:", error);
     if (error.code !== 'auth/popup-closed-by-user') {
-      showError(error.code || error.message);
+      showError('google-auth-failed');
     }
   }
 }
@@ -212,7 +204,6 @@ function initEventListeners() {
 
 // Initialisation
 document.addEventListener('DOMContentLoaded', async () => {
-  console.log("[DEBUG] Initialisation de l'application");
   await loadFirebase();
   initEventListeners();
 });
