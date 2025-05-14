@@ -132,7 +132,7 @@ const cart = {
 
     const price = document.createElement('div');
     price.className = 'cart-item-price';
-    price.textContent = `${item.price.toFixed(2)} €`;
+    price.textContent = `${item.price.toFixed(2)} Dh`;
 
     const quantity = document.createElement('div');
     quantity.className = 'cart-item-quantity';
@@ -209,7 +209,7 @@ const cart = {
       const totalPrice = this.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
       cartCountEl.textContent = totalCount;
-      cartTotalEl.textContent = `${totalPrice.toFixed(2)} €`;
+      cartTotalEl.textContent = `${totalPrice.toFixed(2)} Dh`;
 
       this._saveCart();
     } catch (error) {
