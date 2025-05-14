@@ -25,8 +25,7 @@ const ERROR_MESSAGES = {
   'auth/email-already-in-use': 'Email déjà utilisé',
   'auth/weak-password': `Mot de passe trop faible (min ${PASSWORD_MIN_LENGTH} caractères)`,
   'missing-fields': 'Veuillez remplir tous les champs',
-  'recaptcha-failed': 'Veuillez valider le reCAPTCHA',
-  'google-auth-failed': 'Échec de la connexion Google'
+  'recaptcha-failed': 'Veuillez valider le reCAPTCHA'
 };
 
 // Chargement Firebase
@@ -44,7 +43,7 @@ async function loadFirebase() {
     db = firebase.firestore();
 
     auth.onAuthStateChanged(user => {
-      console.log("État auth changé:", user ? `connecté (${user.uid})` : "déconnecté");
+      console.log("État auth changé:", user ? "connecté" : "déconnecté");
     });
 
   } catch (error) {
@@ -60,7 +59,7 @@ function loadScript(src) {
     const script = document.createElement('script');
     script.src = src;
     script.onload = resolve;
-    script.onerror = () => reject(new Error(`Échec du chargement du script: ${src}`));
+    script.onerror = reject;
     document.body.appendChild(script);
   });
 }
@@ -123,17 +122,6 @@ async function handleEmailAuth(email, password, userData) {
 async function handleGoogleAuth() {
   try {
     const provider = new firebase.auth.GoogleAuthProvider();
-    provider.addScope('email');
-    provider.setCustomParameters({ prompt: 'select_account' });
-
-    // Détection environnement mobile
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    
-    if (isMobile) {
-      await auth.signInWithRedirect(provider);
-      return;
-    }
-
     const result = await auth.signInWithPopup(provider);
 
     // Attendre explicitement que l'état auth soit mis à jour
@@ -144,7 +132,6 @@ async function handleGoogleAuth() {
           resolve();
         }
       });
-      setTimeout(resolve, 1000); // Fallback timeout
     });
 
     if (result.additionalUserInfo?.isNewUser) {
@@ -163,7 +150,7 @@ async function handleGoogleAuth() {
   } catch (error) {
     console.error("Erreur Google auth:", error);
     if (error.code !== 'auth/popup-closed-by-user') {
-      showError('google-auth-failed');
+      showError(error.code);
     }
   }
 }
